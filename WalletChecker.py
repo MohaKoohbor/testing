@@ -64,7 +64,7 @@ elif starter_page == 1:
         for index, entry in enumerate(transactions_list):
                  if search_term in entry.lower():
                     founded.append(index)
-        file_path = "/root/testing/\" + search_term + ".txt"
+        file_path = "/root/testing/" + search_term + ".txt"
         with open(file_path, mode='w') as filee:
             for ind in founded:
                 filee.write(transactions_list[ind] + "\n")
@@ -73,7 +73,7 @@ elif starter_page == 1:
 
     elif option_item == 2:
         os.system('clear')
-        file_path = "/root/testing/\" + form_wallet + ".txt"
+        file_path = "/root/testing/" + form_wallet + ".txt"
         with open(file_path, 'w+', encoding='utf-8') as filee:
             for value in transactions_list:
                 filee.write(str(value) + "\n")
@@ -136,7 +136,7 @@ elif starter_page == 2:
             for index, entry in enumerate(transactions_list):
                  if search_term in entry.lower():
                     founded.append(index)
-            file_path = "/root/testing/\" + search_term + ".txt"
+            file_path = "/root/testing/" + search_term + ".txt"
             with open(file_path, mode='w') as filee:
                 for ind in founded:
                     filee.write(transactions_list[ind] + "\n")
@@ -145,7 +145,7 @@ elif starter_page == 2:
 
         elif option_item == 2:
             #Export All Transactions.
-            file_path = "/root/testing/\transactions_wallets.txt"
+            file_path = "/root/testing/transactions_wallets.txt"
             with open(file_path, 'w+', encoding='utf-8') as filee:
                  for value in transactions_list:
                     filee.write(str(value) + "\n")
