@@ -24,7 +24,7 @@ starter_page = int(input("------ Basic Wallet Checker ------\n\n1. Token Transfe
 if starter_page == 3:
     exit()    
 elif starter_page == 1:
-    os.system('cls')
+    os.system('clear')
     form_wallet = input("---> Get a list of 'ERC20 - Token Transfer Events' by Address <---\n\n1. Please enter the target Wallet Address: ")
     wallet_adress += form_wallet
     print(f"Information: {base_url}{wallet_adress}{api_key}")
@@ -55,40 +55,40 @@ elif starter_page == 1:
     else:
         print(f"Can't fetching data: {response.status_code}")
 
-    os.system('cls')
+    os.system('clear')
     option_item = int(input("------ Implementation Completed ------\n---> " + "\033[32m" + str(len(transactions_list)) +" Transactions Collected. <---\n\n\033[0m1. Search your term in Transactions\n2. Export Transactions\n\n[?] Enter Number: "))
     if option_item == 1:
         founded = []
-        os.system('cls')
+        os.system('clear')
         search_term = str(input("Enter the search term: ")).lower()
         for index, entry in enumerate(transactions_list):
                  if search_term in entry.lower():
                     founded.append(index)
-        file_path = "E:\\" + search_term + ".txt"
+        file_path = "/root/testing/\" + search_term + ".txt"
         with open(file_path, mode='w') as filee:
             for ind in founded:
                 filee.write(transactions_list[ind] + "\n")
         print("Process Completed.")
-        subprocess.run(['notepad', file_path]) 
+        subprocess.run(['xdg-open', file_path]) 
 
     elif option_item == 2:
-        os.system('cls')
-        file_path = "E:\\" + form_wallet + ".txt"
+        os.system('clear')
+        file_path = "/root/testing/\" + form_wallet + ".txt"
         with open(file_path, 'w+', encoding='utf-8') as filee:
             for value in transactions_list:
                 filee.write(str(value) + "\n")
             filee.write("Found " + str(len(transactions_list)) + " Transactions.")
         print("\033[32mFile Exported: "+ file_path +"\033[0m")
-        subprocess.run(['notepad', file_path])
+        subprocess.run(['xdg-open', file_path])
 
 # ----------------- End Section of Menu 1 ----------------- #
 
 # ... (Previous code)
 
 elif starter_page == 2:
-    os.system('cls')
+    os.system('clear')
     file_path = input("---> \033[93mGet a list of 'ERC20 - Token Transfer Events' by Addresses\033[0m <---\n\n1. Please enter the target Wallet Address: ")
-    os.system('cls')
+    os.system('clear')
     with open(file_path, mode='r') as csv_file:
         csv_reader = csv.reader(csv_file)
         header = next(csv_reader)
@@ -125,30 +125,30 @@ elif starter_page == 2:
             else:
                 print(f"Cant fetching data for {wallet}: {response.status_code}")
 
-        os.system('cls')
+        os.system('clear')
         total_transactions = sum(len(transactions) for transactions in transactions_by_wallet.values())
         option_item = int(input("------ Implementation Completed ------\n---> " + "\033[32m" + '{:,.4f}'.format(total_transactions) + " Transactions Collected. <---\n\n\033[0m1. Search your term in Transactions\n2. Export Transactions\n\n[?] Enter Number: "))
 
         if option_item == 1:
             founded = []
-            os.system('cls')
+            os.system('clear')
             search_term = str(input("Enter the search term: ")).lower()
             for index, entry in enumerate(transactions_list):
                  if search_term in entry.lower():
                     founded.append(index)
-            file_path = "E:\\" + search_term + ".txt"
+            file_path = "/root/testing/\" + search_term + ".txt"
             with open(file_path, mode='w') as filee:
                 for ind in founded:
                     filee.write(transactions_list[ind] + "\n")
             print("Process Completed.")
-            subprocess.run(['notepad', file_path])
+            subprocess.run(['xdg-open', file_path])
 
         elif option_item == 2:
             #Export All Transactions.
-            file_path = "E:\\transactions_wallets.txt"
+            file_path = "/root/testing/\transactions_wallets.txt"
             with open(file_path, 'w+', encoding='utf-8') as filee:
                  for value in transactions_list:
                     filee.write(str(value) + "\n")
                     filee.write("Found " + str(len(transactions_list)) + " Transactions.")
             print("\033[32mFile Exported: " + file_path + "\033[0m")
-            subprocess.run(['notepad', file_path])
+            subprocess.run(['xdg-open', file_path])
