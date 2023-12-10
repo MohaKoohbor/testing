@@ -89,6 +89,7 @@ elif starter_page == 2:
     os.system('clear')
     file_path = input("---> \033[93mGet a list of 'ERC20 - Token Transfer Events' by Addresses\033[0m <---\n\n1. Please enter the target Wallet Address: ")
     os.system('clear')
+    
     with open(file_path, mode='r') as csv_file:
         csv_reader = csv.reader(csv_file)
         header = next(csv_reader)
@@ -105,6 +106,7 @@ elif starter_page == 2:
                 data = response.json()
                 response_result = data.get('result', [])
                 transactions_list = []  # Create a new list for each wallet
+
                 for result in response_result:
                     time_stamp = result.get('timeStamp', 'N/A')
                     hash = result.get('hash', 'N/A')
@@ -113,42 +115,74 @@ elif starter_page == 2:
                     token_symbol = result.get('tokenSymbol', 'N/A')
                     token_name = result.get('tokenName', 'N/A')
                     contract = result.get('contractAddress', 'N/A')
-                    value = result.get('value', 'N/A')
-                    value = float(value) / 10**18
-                    valueStr = VALUE_FORMAT.format(value)
+                    value = float(result.get('value', 0)) / 10**18
+                    value_str = VALUE_FORMAT.format(value)
                     timeStamp_utc = int(time_stamp)
-                    transactions_list.append(datetime.utcfromtimestamp(timeStamp_utc).strftime('%Y-%m-%d %H:%M:%S') +
-                        " | Txn Hash: "+ hash +
+                    
+                    transaction_entry = (
+                        datetime.utcfromtimestamp(timeStamp_utc).strftime('%Y-%m-%d %H:%M:%S') +
+                        " | Txn Hash: " + hash +
                         "\n" + transaction_mode(wallet, from_address) + "\nFrom: " + from_address +
-                        f"\n[{token_symbol}] {token_name}: Contract: {contract}" + "\nTo: " + to_address + "\nValue: " + valueStr + "\n-------")
+                        f"\n[{token_symbol}] {token_name}: Contract: {contract}" + "\nTo: " + to_address + "\nValue: " + value_str + "\n-------"
+                    )
+                    transactions_list.append(transaction_entry)
+
                 transactions_by_wallet[wallet] = transactions_list
+
+                # Cache the total transactions count for each wallet
+                total_transactions = len(transactions_list)
+                
+                # Write transactions to file
+                file_path_wallet = f"E:\Wallet\\transactions_{wallet}.txt"
+                with open(file_path_wallet, 'w+', encoding='utf-8') as filee:
+                    for entry in transactions_list:
+                        filee.write(str(entry) + "\n")
+                    filee.write(f"Found {total_transactions} Transactions.")
+
             else:
-                print(f"Cant fetching data for {wallet}: {response.status_code}")
+                print(f"Can't fetching data for {wallet}: {response.status_code}")
 
         os.system('clear')
-        total_transactions = sum(len(transactions) for transactions in transactions_by_wallet.values())
-        option_item = int(input("------ Implementation Completed ------\n---> " + "\033[32m" + '{:,.4f}'.format(total_transactions) + " Transactions Collected. <---\n\n\033[0m1. Search your term in Transactions\n2. Export Transactions\n\n[?] Enter Number: "))
+        option_item = int(input(
+            "------ Implementation Completed ------\n---> " + 
+            "\033[32m" + f'{sum(len(transactions) for transactions in transactions_by_wallet.values()):,.4f}' +
+            " Transactions Collected. <---\n\n\033[0m1. Search your term in Transactions\n2. Export Transactions\n\n[?] Enter Number: "
+        ))
 
         if option_item == 1:
+        # Allow the user to search in transactions
             founded = []
             os.system('clear')
             search_term = str(input("Enter the search term: ")).lower()
-            for index, entry in enumerate(transactions_list):
-                 if search_term in entry.lower():
-                    founded.append(index)
-            file_path = "/root/testing/" + search_term + ".txt"
-            with open(file_path, mode='w') as filee:
-                for ind in founded:
-                    filee.write(transactions_list[ind] + "\n")
-            print("Process Completed.")
-            subprocess.run(['xdg-open', file_path])
+            result_file_path = f"E:\\search_results_{search_term}.txt"
+
+            with open(result_file_path, 'w', encoding='utf-8') as result_file:
+                for wallet, transactions_list in transactions_by_wallet.items():
+                    for index, entry in enumerate(transactions_list):
+                        if search_term in entry.lower():
+                            founded.append((wallet, index))
+                            # Write the search result to the result file
+                            result_file.write(f"Results in transactions of wallet {wallet}:\n")
+                            result_file.write(transactions_by_wallet[wallet][index] + "\n")
+                            result_file.write("------\n")
+
+                print(f"Results written to: {result_file_path}")
+                subprocess.run(['xdg-open', result_file_path])
+
 
         elif option_item == 2:
-            #Export All Transactions.
-            file_path = "/root/testing/transactions_wallets.txt"
-            with open(file_path, 'w+', encoding='utf-8') as filee:
-                 for value in transactions_list:
-                    filee.write(str(value) + "\n")
-                    filee.write("Found " + str(len(transactions_list)) + " Transactions.")
-            print("\033[32mFile Exported: " + file_path + "\033[0m")
-            subprocess.run(['xdg-open', file_path])
+            # Inform the user about the location of exported files
+            print("\033[32mFiles Exported:\033[0m")
+            for wallet in wallets_list:
+                print(f"E:\Wallet\\transactions_{wallet}.txt")
+
+            # Open merged file with all transactions
+            merged_file_path = "E:\Wallet\\transactions_wallets.txt"
+            with open(merged_file_path, 'w+', encoding='utf-8') as merged_file:
+                for wallet, transactions_list in transactions_by_wallet.items():
+                    merged_file.write(f"Transactions for wallet {wallet}:\n")
+                    for entry in transactions_list:
+                        merged_file.write(str(entry) + "\n")
+                    merged_file.write(f"Found {len(transactions_list)} Transactions.\n")
+                print("\033[32mFile Exported: " + merged_file_path + "\033[0m")
+                subprocess.run(['xdg-open', merged_file_path])
