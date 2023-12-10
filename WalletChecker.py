@@ -1,4 +1,3 @@
-# Wallet Checker
 import requests, os, subprocess, csv
 from datetime import datetime
 from colorama import Fore, Style
@@ -133,7 +132,7 @@ elif starter_page == 2:
                 total_transactions = len(transactions_list)
                 
                 # Write transactions to file
-                file_path_wallet = f"E:\Wallet\\transactions_{wallet}.txt"
+                file_path_wallet = f"/root/testing/wallets/{wallet}.txt"
                 with open(file_path_wallet, 'w+', encoding='utf-8') as filee:
                     for entry in transactions_list:
                         filee.write(str(entry) + "\n")
@@ -174,10 +173,10 @@ elif starter_page == 2:
             # Inform the user about the location of exported files
             print("\033[32mFiles Exported:\033[0m")
             for wallet in wallets_list:
-                print(f"E:\Wallet\\transactions_{wallet}.txt")
+                print(f"/root/testing/wallets/{wallet}.txt")
 
             # Open merged file with all transactions
-            merged_file_path = "E:\Wallet\\transactions_wallets.txt"
+            merged_file_path = "/root/testing/wallets/transactions_wallets.txt"
             with open(merged_file_path, 'w+', encoding='utf-8') as merged_file:
                 for wallet, transactions_list in transactions_by_wallet.items():
                     merged_file.write(f"Transactions for wallet {wallet}:\n")
